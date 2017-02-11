@@ -280,15 +280,15 @@
     </li>
   </ul>
 </li>
-<li  class="active">
-  <a class=""
+<li >
+  <a class="collapsed"
      role="button" data-toggle="collapse"
      href="#data-visualization-secondary"
      aria-expanded="false"
      aria-controls="data-visualization-secondary">
      Data Visualization
   </a>
-  <ul class="collapse in"
+  <ul class="collapse "
       id="data-visualization-secondary">
     <li >
       <a href="/patternfly-design/pattern-library/data-visualization/area-chart">Area Chart</a>
@@ -302,7 +302,7 @@
     <li >
       <a href="/patternfly-design/pattern-library/data-visualization/donut-chart">Donut Chart</a>
     </li>
-    <li  class="active">
+    <li >
       <a href="/patternfly-design/pattern-library/data-visualization/heat-map">Heat Map</a>
     </li>
     <li >
@@ -379,15 +379,15 @@
     </li>
   </ul>
 </li>
-<li >
-  <a class="collapsed"
+<li  class="active">
+  <a class=""
      role="button" data-toggle="collapse"
      href="#navigation-secondary"
      aria-expanded="false"
      aria-controls="navigation-secondary">
      Navigation
   </a>
-  <ul class="collapse "
+  <ul class="collapse in"
       id="navigation-secondary">
     <li >
       <a href="/patternfly-design/pattern-library/navigation/breadcrumbs">Breadcrumbs</a>
@@ -395,7 +395,7 @@
     <li >
       <a href="/patternfly-design/pattern-library/navigation/horizontal-navigation">Horizontal Navigation</a>
     </li>
-    <li >
+    <li  class="active">
       <a href="/patternfly-design/pattern-library/navigation/pagination">Pagination</a>
     </li>
     <li >
@@ -483,7 +483,7 @@
                 <li >
                 <a href="/patternfly-design/pattern-library/widgets/#modal">Modal</a>
                 </li>
-                <li >
+                <li  class="active">
                 <a href="/patternfly-design/pattern-library/widgets/#pagination">Pagination</a>
                 </li>
                 <li >
@@ -538,7 +538,7 @@
     <li role="presentation"><a href="#design" aria-controls="design" role="tab" data-toggle="tab">Design</a></li>
 
 
-    <li role="presentation"><a href="#code" aria-controls="code" role="tab" data-toggle="tab">Code</a></li>
+    <li role="presentation" class="disabled"><a aria-controls="code" role="tab" title="Code example is not available at this time">Code</a></li>
 
 <!--
   <li role="presentation"><a href="#usability-test" aria-controls="usability-test" role="tab" data-toggle="tab">Usability Test</a></li>
@@ -565,81 +565,106 @@
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="overview">
           
-          <h1 id="heat-map">Heat Map</h1>
+          <h1 id="pagination">Pagination</h1>
 
-<p>A heat map is a visualization of objects as blocks in a grid. The blocks are colored to represent an attribute of the object, such as utilization rate. Using color allows the user to quickly access high level information for each object.</p>
+<p>This pattern defines how pagination behaves within content views. When present, pagination is consistent across all three content views.</p>
 
-<p>When heat map items become so small that they can no longer be meaningfully distinguished,  (differs by screen size/resolution) each section of tiny squares begins to act as a single unit grouped together by color. Hovering over a section displays a tooltip with a summary of the items in the section such as their count and which legend entry they represent.</p>
-
-<p>Clicking on the section takes the user to the content view for that item type, filtered to show the items in the clicked section. Whether a single block or group is selected is determined by the size of individual blocks.</p>
-
-<p>The most common use cases for a heat map are:</p>
 <ul>
-  <li>Users need to quickly assess the utilization rate of objects in a data set. Colored blocks, indicating utilization percentages, provide “at a glance” status which aids in troubleshooting.</li>
-  <li>Users need to scan the status of each object in a data set.</li>
+  <li>Pagination is optional.
+    <ul>
+      <li>Pagination is not necessary when there is a small amount of content.</li>
+      <li>Pagination is not necessary when an application uses “lazy load” to load content as a user scrolls.</li>
+    </ul>
+  </li>
+  <li>Pagination can be “sticky” and remain fixed to the bottom of a user’s browser.
+    <ul>
+      <li>A sticky footer is not recommended for views with content <em>below</em> pagination.</li>
+    </ul>
+  </li>
 </ul>
 
-<h2 id="heat-map-1">Heat Map</h2>
-<p><img src="img/heat-map.png" alt="Image of card title" /></p>
+<h2 id="pagination---table-view">Pagination - Table View</h2>
 
-<h2 id="heat-map-variations">Heat Map Variations</h2>
-<p><img src="img/heat-map-hover.png" alt="Image of card title" /></p>
+<p><img src="img/pagination_overview.png" alt="Pagination Overview" /></p>
 
         </div>
         <div role="tabpanel" class="tab-pane" id="design">
           
             
-            <h1 id="heat-map">Heat Map</h1>
+            <h1 id="pagination">Pagination</h1>
 
-<p>Jump to <a href="#standard-heat-map">Standard Heat Map</a> or <a href="#hover-behavior">Hover Behavior</a></p>
-
-<h2 id="standard-heat-map">Standard Heat Map</h2>
-<p><img src="img/heat-map-callout.png" alt="Image of standard heat map" /></p>
+<p><img src="img/pagination_callouts.png" alt="Pagination Callouts" /></p>
 
 <ol>
-  <li><strong>Block:</strong>
+  <li><strong>Items per Page:</strong> This control displays the number of items on a page.
     <ul>
-      <li>Each block is a square that represents an object in the a data set.
-        <ul>
-          <li>All blocks should be the same size. The size of blocks are based on the number of blocks in the heat map.</li>
-          <li>Blocks are ordered by the attribute status. The object whose attribute is at the highest percentage will be placed in the top-left corner of the map. The remaining object blocks are presented in a descending order (from top-bottom, left-right) by order of percentage.</li>
-          <li>The user should be able to click on a block in the heat map to get more detailed information about the object.  Design alternatives will be added in a future version of this pattern.</li>
-        </ul>
-      </li>
+      <li>It includes an option to modify the number of items displayed. It is recommended that the default number be less than 25 in order to minimize scrolling.</li>
     </ul>
   </li>
-  <li><strong>Block Fill</strong> (optional): Choose a fill color that best reflects the attribute being represented.
-    <ul>
-      <li>Colors should be based on the PatternFly <a href="/styles/color-palette/">color palette</a></li>
-      <li>Colors ranges should be relevant to a particular attribute.</li>
-      <li>Status thresholds can be represented by the following colors:</li>
-      <li>Critical range: Red (#CC0000)</li>
-      <li>Warning range: Orange (#EC7A08)</li>
-      <li>Trending to Warning: Yellow (#F9D67A)</li>
-      <li>No Issues: Light Primary Blue (#BEE1F4)</li>
-    </ul>
-  </li>
-  <li>
-    <p><strong>Tooltip:</strong> Tooltips should include the name of the object as well as a summary of the data represented, for example utilization or object status.</p>
-  </li>
-  <li><strong>Legend:</strong> It is recommended to include a legend to define the colors on the chart. Multiple heat maps may reference a single legend, provided they share the same attribute values. The legend may be located left aligned and underneath the chart or left aligned and to the right of the chart.
-    <ul>
-      <li><strong>Interactive Legend</strong> (optional): Clicking on a series in the legend should toggle the visibility of the series in the chart. Hovering over a series in the legend will highlight the blocks associated with that attribute.</li>
-    </ul>
-  </li>
+  <li><strong>Items Displayed:</strong> This count displays the items currently in view.</li>
+  <li><strong>Navigate Pages:</strong> These controls allow the user to navigate to the previous or first page.</li>
+  <li><strong>Current Page:</strong> This control displays the current page and allows users to navigate to a specific page.</li>
+  <li><strong>Total Pages:</strong> This count displays the total number of pages.</li>
+  <li><strong>Navigate Pages:</strong> These controls allow the user to navigate to the next or last page.</li>
 </ol>
 
-<h2 id="hover-behavior">Hover Behavior</h2>
-<p>There are two variations of hover dependent on the block size. These variations include a hover state for a single block and a hover state for a collection of blocks.</p>
+<h2 id="pagination---selection-pattern">Pagination - Selection Pattern</h2>
 
-<p><img src="img/heat-map-hover-callout.png" alt="Image of heat map hover callout" /></p>
+<h3 id="default-view">Default View</h3>
+<p><img src="img/pagination_selection_1.png" alt="Pagination Select 1" /></p>
+
+<h3 id="filters-applied">Filters Applied</h3>
+<p><img src="img/pagination_selection_2.png" alt="Pagination Select 2" /></p>
 
 <ol>
-  <li>
-    <p><strong>Large Block Size:</strong> If the block size is at least 16 x 16px, hovering over a block will dim ALL blocks other than that single block. The tooltip is specific to the object represented by that block. Recommended maximum block size is 50 x 50px</p>
-  </li>
-  <li>
-    <p><strong>Small Block Size:</strong> If the block size is smaller than 16x16, hovering over a block will dim all blocks NOT associated with that specific RANGE. The tooltip is specific to the range itself. Recommended minimum block size is 2x2.</p>
+  <li><strong>Filters:</strong> Filters are displayed on left side.</li>
+  <li><strong>Item Count:</strong> An updated item count is displayed on the right side.</li>
+</ol>
+
+<h3 id="single-select">Single Select</h3>
+<p><img src="img/pagination_selection_3.png" alt="Pagination Select 3" /></p>
+
+<ol>
+  <li><strong>Single Select:</strong> Select single items by checking the box on the left of each item row.</li>
+</ol>
+
+<h3 id="multi-select">Multi-Select</h3>
+<p><img src="img/pagination_selection_4.png" alt="Pagination Select 4" /></p>
+
+<ol>
+  <li><strong>Multi-Select:</strong> Select all items within a single page by checking the box in the column header.</li>
+</ol>
+
+<h3 id="select-all">Select All</h3>
+<p><img src="img/pagination_selection_5.png" alt="Pagination Select 5" /></p>
+
+<ol>
+  <li><strong>Select All:</strong> Select all items within the table by clicking Select All link.</li>
+</ol>
+
+<h3 id="clear-all">Clear All</h3>
+<p><img src="img/pagination_selection_6.png" alt="Pagination Select 6" /></p>
+
+<ol>
+  <li><strong>Clear All:</strong> Clear any selected items by clicking Clear All link.</li>
+</ol>
+
+<h3 id="selection-while-paging">Selection While Paging</h3>
+<p><img src="img/pagination_selection_7.png" alt="Pagination Select 7" /></p>
+
+<ol>
+  <li><strong>Selection While Paging:</strong> Items remain selected even as a user pages.</li>
+</ol>
+
+<h2 id="pagination---content-below">Pagination - Content Below</h2>
+<p><img src="img/pagination_content_below.png" alt="Pagination Content Below" /></p>
+
+<ol>
+  <li><strong>Content Below:</strong> A sticky footer is not recommended for views with content <em>below</em> pagination.</li>
+  <li><strong>Items per Page:</strong> It is recommended that the default number of items displayed be less than 25 in order to minimize scrolling.
+    <ul>
+      <li>Allowing users to change the default number should be optional.</li>
+    </ul>
   </li>
 </ol>
 
@@ -649,8 +674,8 @@
           
             <ul class="nav nav-tabs nav-tabs-pf nav-tabs-code" id="tabs-code" role="tablist">
 
-  <li role="presentation" class="disabled"><a class="nested" aria-controls="html-css" role="tab" disabled="disabled" title="HTML/CSS example is not available at this time">HTML/CSS</a></li>
-  <li role="presentation" class="active"><a class="nested" href="#angular" aria-controls="angular" role="tab" data-toggle="tab">AngularJS</a></li>
+  <li role="presentation" class="active"><a class="nested" href="#html-css" aria-controls="html-css" role="tab" data-toggle="tab">HTML/CSS</a></li>
+  <li role="presentation"><a class="nested" href="#angular" aria-controls="angular" role="tab" data-toggle="tab">AngularJS</a></li>
 
 </ul>
 
@@ -662,9 +687,7 @@
             <div role="tabpanel" class="tab-pane nested active" id="angular">
               <div ng-app="docsApp" ng-controller="DocsController" class="content">
                 
-                  <div ng-include src="'/patternfly-design/components/angular-patternfly/dist/docs/partials/api/patternfly.charts.directive.pfHeatMap.html'"></div>
-                
-                <!-- % include  % -->
+                <!-- % include false % -->
               </div>
             </div>
           </div>
