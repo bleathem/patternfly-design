@@ -1,0 +1,2247 @@
+<html>
+<head>
+  <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.21.0/css/patternfly.css'>
+  <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.21.0/css/patternfly-additions.css'>
+  <script defer src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+  <script defer src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js'></script>
+  <script defer>
+  (function() {
+    var maxDays = 0;
+    var today = new Date();
+
+    function initDates() {
+      var endDate = toDate(0);
+      updateSlider(document.getElementById('endDaysSlider'), 0);
+      updateInput(document.getElementById('endDaysInput'), endDate);
+      updateOutput(document.getElementById('endDaysOutput'), 0);
+
+      let days = getQueryStringValue('days') || 30;
+      days = -1 * days;
+      var startDate = toDate(days);
+      updateSlider(document.getElementById('startDaysSlider'), days);
+      updateInput(document.getElementById('startDaysInput'), startDate);
+      updateOutput(document.getElementById('startDaysOutput'), days);
+    }
+    function toDays(date) {
+      var one_day=1000*60*60*24;
+      var days = Math.round((date.getTime() - today.getTime()) / one_day);
+      return days;
+    }
+    function toDate(days) {
+      var date = new Date();
+      date.setDate(today.getDate() + days);
+      return date;
+    }
+    function updateSlider(slider, days) {
+      slider.value = maxDays + days;
+    }
+    function updateInput(input, date) {
+      input.value = date.toISOString().substring(0, 10);
+    }
+    function updateOutput(output, days) {
+      output.innerText = days + ' days';
+    }
+    function getQueryStringValue (key) {
+      return decodeURIComponent(window.location.search.replace(new RegExp('^(?:.*[&\\?]' + encodeURIComponent(key).replace(/[\.\+\*]/g, '\\$&') + '(?:\\=([^&]*))?)?.*$', 'i'), '$1'));
+    }
+    function findMaxDays(nodeList) {
+      let now = new Date().getTime();
+      maxDays = 0;
+      for (let i = 0; i < nodeList.length; i++) {
+        let icon = nodeList[i];
+        let createdDate = new Date(icon.dataset.created).getTime();
+        let days = (now - createdDate) / 1000 / 3600 / 24;
+        maxDays = Math.max(days, maxDays);
+      }
+      maxDays = Math.min(365, Math.floor(maxDays));
+      document.getElementById('startDaysSlider').setAttribute('max', maxDays);
+      document.getElementById('endDaysSlider').setAttribute('max', maxDays);
+    };
+
+    function updateClass(icon) {
+      if (icon.dataset.status == 'created') {
+          icon.classList.remove('fa-file-text-o', 'pf-design-table__icon--present', 'pf-design-table__icon--changed');
+          icon.classList.add('fa-star', 'pf-design-table__icon--new');
+        } else if (icon.dataset.status == 'changed') {
+          icon.classList.remove('fa-star', 'pf-design-table__icon--present', 'pf-design-table__icon--new');
+          icon.classList.add('fa-file-text-o', 'pf-design-table__icon--changed');
+        } else {
+          icon.classList.remove('fa-star', 'pf-design-table__icon--changed', 'pf-design-table__icon--new');
+          icon.classList.add('fa-file-text-o', 'pf-design-table__icon--present');
+        }
+    }
+
+    function setAnimationListeners(nodeList) {
+      for (let i = 0; i < nodeList.length; i++) {
+        let icon = nodeList[i];
+        icon.addEventListener('animationend', function(event) {
+          if (event.animationName == 'appear') {
+            icon.classList.remove('add-icon');
+          } else if (event.animationName == 'disappear') {
+            icon.classList.remove('remove-icon');
+            updateClass(this);
+            icon.classList.add('add-icon');
+          }
+        });
+      }
+    }
+
+    function updateFileIcons(nodeList) {
+      var startDaysInput = document.getElementById('startDaysInput');
+      var endDaysInput = document.getElementById('endDaysInput');
+      var endDate = new Date(endDaysInput.value).getTime();
+      var startDate = new Date(startDaysInput.value).getTime();
+      for (let i = 0; i < nodeList.length; i++) {
+        let icon = nodeList[i];
+        let changedDate = new Date(icon.dataset.changed).getTime();
+        let createdDate = new Date(icon.dataset.created).getTime();
+        let oldStatus = icon.dataset.status;
+        if (startDate < createdDate &&  createdDate < endDate) {
+          icon.dataset.status = 'created';
+        } else if (startDate < changedDate &&  changedDate < endDate) {
+          icon.dataset.status = 'changed';
+        } else {
+          icon.dataset.status = 'present';
+        };
+        if (!oldStatus) {
+          updateClass(icon);
+        } else if (oldStatus != icon.dataset.status) {
+          icon.classList.add('remove-icon');
+        }
+
+      }
+    }
+    function init() {
+      let nodeList = document.querySelectorAll('.pf-design-table__cell--present .pf-design-table__icon')
+      findMaxDays(nodeList);
+      setAnimationListeners(nodeList);
+      initDates();
+      updateFileIcons(nodeList);
+      var endDate = new Date();
+      var startDate = new Date();
+      startDate.setDate(endDate.getDate() - maxDays);
+      $('#startDaysInputDiv').datepicker({
+        autoclose: true,
+        orientation: "auto",
+        todayBtn: "linked",
+        todayHighlight: true,
+        format: 'yyyy-mm-dd',
+        startDate: startDate,
+        endDate: endDate
+      });
+      $('#endDaysInputDiv').datepicker({
+        autoclose: true,
+        orientation: "auto",
+        todayBtn: "linked",
+        todayHighlight: true,
+        format: 'yyyy-mm-dd',
+        startDate: startDate,
+        endDate: endDate
+      });
+      document.getElementById('startDaysSlider').addEventListener('input', function() {
+        let days = this.value - maxDays;
+        let date = toDate(days);
+        updateInput(document.getElementById('startDaysInput'), date);
+        updateOutput(document.getElementById('startDaysOutput'), days);
+        updateFileIcons(nodeList);
+      });
+      document.getElementById('startDaysInput').addEventListener('change', function() {
+        let date = new Date(this.value);
+        let days = toDays(date);
+        updateSlider(document.getElementById('startDaysSlider'), days);
+        updateOutput(document.getElementById('startDaysOutput'), days);
+        updateFileIcons(nodeList);
+      });
+      $('#startDaysInputDiv').datepicker().on('changeDate', function(e) {
+        let date = new Date(e.date);
+        let days = toDays(date);
+        updateSlider(document.getElementById('startDaysSlider'), days);
+        updateOutput(document.getElementById('startDaysOutput'), days);
+        updateFileIcons(nodeList);
+      });
+      document.getElementById('endDaysSlider').addEventListener('input', function() {
+        let days = this.value - maxDays;
+        let date = toDate(days);
+        updateInput(document.getElementById('endDaysInput'), date);
+        updateOutput(document.getElementById('endDaysOutput'), days);
+        updateFileIcons(nodeList);
+      });
+      $('#endDaysInputDiv').datepicker().on('changeDate', function(e) {
+        let date = new Date(e.date);
+        let days = toDays(date);
+        updateSlider(document.getElementById('endDaysSlider'), days);
+        updateOutput(document.getElementById('endDaysOutput'), days);
+        updateFileIcons(nodeList);
+      });
+    }
+    window.pfStatusTable = {
+      init: init
+    }
+  })();
+  </script>
+  <script defer>
+    window.onload = function() {
+      var config = pfStatusTable.init();
+    };
+  </script>
+  <style>
+
+  @keyframes appear {
+    from { filter: opacity(0) }
+    to { filter: opacity(1) }
+  }
+
+  @keyframes disappear {
+    from { filter: opacity(1) }
+    to { filter: opacity(0) }
+  }
+
+  .pf-design-table {
+    width: auto;
+    margin: auto;
+  }
+
+  .pf-design-table__cell {
+    text-align: center;
+  }
+  .pf-design-table__cell--missing {
+    background-color: #ffe6e6;
+  }
+  .pf-design-table__icon {
+    line-height: 1.66666667;
+  }
+  .pf-design-table__icon--new {
+    color: #f0ab00;
+  }
+  .pf-design-table__icon--changed {
+    color: #00659c;
+  }
+  .pf-design-table__icon--present {
+    color: #8b8d8f;
+  }
+  .pf-design-table__icon--missing {
+    color: #a30000;
+  }
+  .pf-design-table__days-slider {
+    display: flex;
+  }
+  .pf-design-table__days-output {
+    font-size: 100%;
+    padding: 3px;
+    flex-shrink: 0;
+  }
+  .remove-icon {
+    animation: disappear .2s ease;
+    animation-fill-mode: forwards;
+  }
+  .add-icon {
+    animation: appear .2s ease;
+    animation-fill-mode: forwards;
+  }
+  .pf-design-table__legend_row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    white-space: nowrap;
+  }
+  .pf-design-table__date-input-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    white-space: nowrap;
+  }
+
+  .table-striped > tbody > tr:nth-of-type(odd) > td.pf-design-table__cell__impl {
+    background-color: #f5f5f5;
+  }
+
+  .table-striped > tbody > tr:nth-of-type(even) > td.pf-design-table__cell__impl {
+    background-color: white;
+  }
+
+  </style>
+</head>
+<body>
+  <table class='table table-striped pf-design-table' >
+    <colgroup span="4">
+    </colgroup>
+    <colgroup class="pf-design-table__colgroup__impls" span="4">
+    </colgroup>
+    <tbody class='pf-design-table__legend'>
+      <tr><th colspan='4'><h2>File status indicators</h2></th></tr>
+      <tr>
+        <td colspan='4'>
+          <div class='pf-design-table__date-input-container'>
+            <div>
+              <label for='startDaysInput'>Start Date</label>
+              <div id="startDaysInputDiv" class="input-group date">
+                <input type="text" class="form-control bootstrap-datepicker" id='startDaysInput' readonly><span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+              </div>
+              <input id='startDaysSlider' type='range' min='0' value='70' max='100' step='1'/>
+              <output class='pf-design-table__days-output days' for='startDaysSlider' id='startDaysOutput'>50 days</output>
+            </div>
+            <div>
+              <label for='endDaysInput'>End Date</label>
+              <div id="endDaysInputDiv" class="input-group date">
+                <input type="text" class="form-control bootstrap-datepicker" id='endDaysInput' readonly><span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+              </div>
+              <input id='endDaysSlider' type='range' min='0' value='100' max='100' step='1'/>
+              <output class='pf-design-table__days-output days' for='endDaysSlider' id='endDaysOutput'>50 days</output>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan='4'>
+          <div class='pf-design-table__legend_row'>
+            <span class='col-xs-3'><span class='fa fa-star pf-design-table__icon pf-design-table__icon--new'></span> Created</span>
+            <span class='col-xs-3'><span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'></span> Modified</span>
+            <span class='col-xs-3'><span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--present'></span> Present</span>
+            <span class='col-xs-3'><span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span> Missing</span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>application-framework</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/application-framework/launcher'>launcher</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:31:40 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:31:40 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:31:40 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:31:40 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:31:40 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:31:40 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/application-framework/login-page'>login-page</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        title='Modified on January 27th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Mon Mar 13 2017 14:19:07 GMT-0700 (PDT)'
+                        title='Modified on March 13th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
+                        data-changed='Thu Mar 02 2017 08:49:10 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on February 8th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <a href="https://rawgit.com/patternfly/patternfly/master-dist/dist/tests/login.html" target="_new">
+                      <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--present'></span>
+                    </a>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/application-framework/masthead'>masthead</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sun Jan 15 2017 19:36:29 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 19:36:29 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on January 15th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sun Jan 15 2017 19:36:29 GMT-0800 (PST)'
+                        data-changed='Mon Jan 30 2017 20:10:18 GMT-0800 (PST)'
+                        title='Modified on January 30th 2017. Created on January 15th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>cards</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/cards/aggregate-status-card'>aggregate-status-card</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 18:40:55 GMT-0800 (PST)'
+                        data-changed='Thu Mar 02 2017 12:09:56 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 18:40:55 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 08:39:19 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <a href="https://www.patternfly.org/angular-patternfly/#/api/patternfly.card.directive:pfAggregateStatusCard" target="_new">
+                      <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--present'></span>
+                    </a>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/cards/base-card'>base-card</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sun Jan 15 2017 08:09:22 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 08:09:22 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on January 15th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sun Jan 15 2017 08:09:22 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 08:09:22 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on January 15th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:41:57 GMT-0800 (PST)'
+                        data-changed='Wed Feb 08 2017 23:18:31 GMT-0800 (PST)'
+                        title='Modified on February 8th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/cards/trend-card'>trend-card</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 17:33:14 GMT-0800 (PST)'
+                        data-changed='Tue Mar 21 2017 12:46:29 GMT-0700 (PDT)'
+                        title='Modified on March 21st 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 17:33:14 GMT-0800 (PST)'
+                        data-changed='Thu Mar 02 2017 11:52:39 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/cards/utilization-bar-card'>utilization-bar-card</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 17:52:35 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 08:47:34 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 17:52:35 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 08:49:34 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/cards/utilization-trend-card'>utilization-trend-card</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 18:05:41 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 09:08:12 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 18:05:41 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 09:08:12 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>communication</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/about-modal'>about-modal</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 10:06:03 GMT-0700 (PDT)'
+                        data-changed='Wed Jan 18 2017 14:16:55 GMT-0800 (PST)'
+                        title='Modified on January 18th 2017. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 10:06:03 GMT-0700 (PDT)'
+                        data-changed='Wed Jan 18 2017 14:16:55 GMT-0800 (PST)'
+                        title='Modified on January 18th 2017. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/empty-state'>empty-state</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 06:52:00 GMT-0700 (PDT)'
+                        data-changed='Thu Mar 02 2017 12:32:20 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 06:52:00 GMT-0700 (PDT)'
+                        data-changed='Mon Nov 21 2016 04:53:54 GMT-0800 (PST)'
+                        title='Modified on November 21st 2016. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/inline-notifications'>inline-notifications</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 07:13:04 GMT-0700 (PDT)'
+                        data-changed='Wed Jan 18 2017 13:01:07 GMT-0800 (PST)'
+                        title='Modified on January 18th 2017. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 07:13:04 GMT-0700 (PDT)'
+                        data-changed='Wed Jan 18 2017 13:01:07 GMT-0800 (PST)'
+                        title='Modified on January 18th 2017. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/notification-drawer'>notification-drawer</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 04 2016 09:40:01 GMT-0700 (PDT)'
+                        data-changed='Wed Jan 18 2017 10:37:21 GMT-0800 (PST)'
+                        title='Modified on January 18th 2017. Created on November 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 04 2016 09:40:01 GMT-0700 (PDT)'
+                        data-changed='Mon Feb 13 2017 09:03:42 GMT-0800 (PST)'
+                        title='Modified on February 13th 2017. Created on November 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Dec 08 2016 11:25:37 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 19:26:36 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on December 8th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/toast-notifications'>toast-notifications</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 07:51:10 GMT-0700 (PDT)'
+                        data-changed='Thu Mar 02 2017 11:40:45 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Nov 03 2016 07:51:10 GMT-0700 (PDT)'
+                        data-changed='Sun Jan 15 2017 09:26:01 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 3rd 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:14:07 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/tour'>tour</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Apr 03 2017 14:23:23 GMT-0700 (PDT)'
+                        data-changed='Fri Apr 07 2017 07:27:54 GMT-0700 (PDT)'
+                        title='Modified on April 7th 2017. Created on April 3rd 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Apr 03 2017 14:23:23 GMT-0700 (PDT)'
+                        data-changed='Fri Apr 07 2017 07:27:54 GMT-0700 (PDT)'
+                        title='Modified on April 7th 2017. Created on April 3rd 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Apr 03 2017 14:23:23 GMT-0700 (PDT)'
+                        data-changed='Mon Apr 03 2017 14:23:23 GMT-0700 (PDT)'
+                        title='Modified on April 3rd 2017. Created on April 3rd 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/wizard'>wizard</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 04 2016 09:33:59 GMT-0700 (PDT)'
+                        data-changed='Thu Mar 02 2017 11:53:45 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on November 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 04 2016 09:33:59 GMT-0700 (PDT)'
+                        data-changed='Mon Nov 21 2016 05:21:36 GMT-0800 (PST)'
+                        title='Modified on November 21st 2016. Created on November 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:14:07 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>content-views</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/content-views/canvas-view'>canvas-view</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Jan 24 2017 12:04:07 GMT-0800 (PST)'
+                        data-changed='Tue Jan 24 2017 12:04:07 GMT-0800 (PST)'
+                        title='Modified on January 24th 2017. Created on January 24th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Jan 24 2017 12:04:07 GMT-0800 (PST)'
+                        data-changed='Wed Apr 19 2017 09:59:27 GMT-0700 (PDT)'
+                        title='Modified on April 19th 2017. Created on January 24th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
+                        data-changed='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
+                        title='Modified on February 8th 2017. Created on February 8th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/content-views/card-view'>card-view</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 07:39:46 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 06:04:02 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 07:39:46 GMT-0800 (PST)'
+                        data-changed='Thu Apr 06 2017 11:33:22 GMT-0700 (PDT)'
+                        title='Modified on April 6th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Wed Feb 08 2017 21:37:26 GMT-0800 (PST)'
+                        title='Modified on February 8th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/content-views/list-view'>list-view</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 10:10:11 GMT-0800 (PST)'
+                        data-changed='Thu Jan 26 2017 05:19:11 GMT-0800 (PST)'
+                        title='Modified on January 26th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 10:10:11 GMT-0800 (PST)'
+                        data-changed='Tue Apr 04 2017 14:15:55 GMT-0700 (PDT)'
+                        title='Modified on April 4th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Thu Feb 02 2017 16:31:26 GMT-0800 (PST)'
+                        title='Modified on February 2nd 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/content-views/table-view'>table-view</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 10:56:25 GMT-0800 (PST)'
+                        data-changed='Wed Apr 19 2017 13:51:10 GMT-0700 (PDT)'
+                        title='Modified on April 19th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 10:56:25 GMT-0800 (PST)'
+                        data-changed='Thu Apr 06 2017 11:37:31 GMT-0700 (PDT)'
+                        title='Modified on April 6th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Wed Feb 22 2017 21:23:31 GMT-0800 (PST)'
+                        title='Modified on February 22nd 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>dashboard</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/dashboard/dashboard-layout'>dashboard-layout</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 18:53:33 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 14:13:48 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 18:53:33 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 14:13:48 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>data-visualization</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/area-chart'>area-chart</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 19:36:20 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 13:16:28 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 19:36:20 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/bar-chart'>bar-chart</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 19:54:09 GMT-0800 (PST)'
+                        data-changed='Wed Jan 18 2017 06:07:32 GMT-0800 (PST)'
+                        title='Modified on January 18th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Nov 07 2016 19:54:09 GMT-0800 (PST)'
+                        data-changed='Thu Apr 20 2017 06:02:36 GMT-0700 (PDT)'
+                        title='Modified on April 20th 2017. Created on November 7th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/bullet-chart'>bullet-chart</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Oct 04 2016 13:03:26 GMT-0700 (PDT)'
+                        data-changed='Thu Mar 02 2017 11:52:52 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on October 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Oct 04 2016 13:03:26 GMT-0700 (PDT)'
+                        data-changed='Thu Jan 19 2017 07:54:20 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on October 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Dec 07 2016 06:14:39 GMT-0800 (PST)'
+                        data-changed='Wed Dec 07 2016 14:02:49 GMT-0800 (PST)'
+                        title='Modified on December 7th 2016. Created on December 7th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/donut-chart'>donut-chart</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 05:03:43 GMT-0800 (PST)'
+                        data-changed='Thu Mar 02 2017 11:52:47 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 05:03:43 GMT-0800 (PST)'
+                        data-changed='Thu Mar 02 2017 12:37:34 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/heat-map'>heat-map</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Sep 09 2016 14:23:51 GMT-0700 (PDT)'
+                        data-changed='Thu Mar 02 2017 11:52:03 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on September 9th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Sep 09 2016 14:23:51 GMT-0700 (PDT)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on September 9th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 25 2016 13:19:46 GMT-0800 (PST)'
+                        data-changed='Wed Dec 07 2016 14:02:49 GMT-0800 (PST)'
+                        title='Modified on December 7th 2016. Created on November 25th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/line-chart'>line-chart</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 05:14:55 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 05:14:55 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/pie-chart'>pie-chart</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 17:09:01 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 17:09:01 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 13:13:51 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/sparkline'>sparkline</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 17:23:37 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 15:58:25 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 17:23:37 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 15:58:25 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/timeline'>timeline</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Oct 04 2016 13:03:26 GMT-0700 (PDT)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on October 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Oct 04 2016 13:03:26 GMT-0700 (PDT)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on October 4th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Dec 07 2016 06:14:39 GMT-0800 (PST)'
+                        data-changed='Wed Dec 07 2016 14:02:49 GMT-0800 (PST)'
+                        title='Modified on December 7th 2016. Created on December 7th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/utilization-bar-chart'>utilization-bar-chart</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 17:32:47 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 10:19:56 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Nov 08 2016 17:32:47 GMT-0800 (PST)'
+                        data-changed='Thu Jan 19 2017 13:13:51 GMT-0800 (PST)'
+                        title='Modified on January 19th 2017. Created on November 8th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>forms-and-controls</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/datepicker'>datepicker</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sun Jan 15 2017 14:39:10 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 14:39:10 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on January 15th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sun Jan 15 2017 14:39:10 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 14:39:10 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on January 15th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/drag-and-drop'>drag-and-drop</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Dec 06 2016 11:29:19 GMT-0800 (PST)'
+                        data-changed='Tue Feb 14 2017 11:34:17 GMT-0800 (PST)'
+                        title='Modified on February 14th 2017. Created on December 6th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Dec 06 2016 11:29:19 GMT-0800 (PST)'
+                        data-changed='Tue Feb 14 2017 08:40:14 GMT-0800 (PST)'
+                        title='Modified on February 14th 2017. Created on December 6th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        data-changed='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        title='Modified on January 21st 2017. Created on January 21st 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/dual-pane-selector'>dual-pane-selector</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/errors-and-validation'>errors-and-validation</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Oct 01 2016 13:37:10 GMT-0700 (PDT)'
+                        data-changed='Sun Jan 15 2017 15:36:22 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on October 1st 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Dec 07 2016 06:14:39 GMT-0800 (PST)'
+                        data-changed='Wed Dec 07 2016 14:02:49 GMT-0800 (PST)'
+                        title='Modified on December 7th 2016. Created on December 7th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/expand-collapse-section'>expand-collapse-section</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Oct 17 2016 06:30:52 GMT-0700 (PDT)'
+                        data-changed='Sun Jan 15 2017 14:58:09 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on October 17th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Oct 17 2016 06:30:52 GMT-0700 (PDT)'
+                        data-changed='Sun Jan 15 2017 14:54:11 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on October 17th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Dec 07 2016 06:14:39 GMT-0800 (PST)'
+                        data-changed='Wed Dec 07 2016 14:02:49 GMT-0800 (PST)'
+                        title='Modified on December 7th 2016. Created on December 7th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/field-level-help'>field-level-help</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 18 2016 11:07:27 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 15:04:54 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 18th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 18 2016 11:07:27 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 15:04:54 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on November 18th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/filter'>filter</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        data-changed='Wed Apr 12 2017 13:48:45 GMT-0700 (PDT)'
+                        title='Modified on April 12th 2017. Created on January 21st 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        data-changed='Thu Mar 02 2017 08:48:32 GMT-0800 (PST)'
+                        title='Modified on March 2nd 2017. Created on January 21st 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        data-changed='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        title='Modified on January 21st 2017. Created on January 21st 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/find'>find</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 18 2016 11:36:09 GMT-0800 (PST)'
+                        data-changed='Mon Jan 23 2017 07:58:17 GMT-0800 (PST)'
+                        title='Modified on January 23rd 2017. Created on November 18th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 18 2016 11:36:09 GMT-0800 (PST)'
+                        data-changed='Mon Jan 23 2017 07:58:17 GMT-0800 (PST)'
+                        title='Modified on January 23rd 2017. Created on November 18th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Feb 14 2017 14:09:55 GMT-0800 (PST)'
+                        data-changed='Mon Jan 30 2017 11:45:29 GMT-0800 (PST)'
+                        title='Modified on January 30th 2017. Created on February 14th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/form-field-layouts'>form-field-layouts</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Sep 30 2016 10:30:22 GMT-0700 (PDT)'
+                        data-changed='Tue Feb 14 2017 10:59:52 GMT-0800 (PST)'
+                        title='Modified on February 14th 2017. Created on September 30th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Dec 07 2016 06:14:39 GMT-0800 (PST)'
+                        data-changed='Wed Dec 07 2016 14:02:49 GMT-0800 (PST)'
+                        title='Modified on December 7th 2016. Created on December 7th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/forms'>forms</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 18 2016 13:24:59 GMT-0800 (PST)'
+                        data-changed='Fri Dec 16 2016 06:24:23 GMT-0800 (PST)'
+                        title='Modified on December 16th 2016. Created on November 18th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Nov 18 2016 13:24:59 GMT-0800 (PST)'
+                        data-changed='Fri Dec 16 2016 06:24:23 GMT-0800 (PST)'
+                        title='Modified on December 16th 2016. Created on November 18th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Jan 30 2017 11:45:29 GMT-0800 (PST)'
+                        data-changed='Tue Feb 14 2017 14:28:04 GMT-0800 (PST)'
+                        title='Modified on February 14th 2017. Created on January 30th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/inline-edit'>inline-edit</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        title='Modified on January 27th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        title='Modified on January 27th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        data-changed='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        title='Modified on January 21st 2017. Created on January 21st 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/input-controls'>input-controls</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Oct 01 2016 12:37:07 GMT-0700 (PDT)'
+                        data-changed='Sat Oct 01 2016 12:37:07 GMT-0700 (PDT)'
+                        title='Modified on October 1st 2016. Created on October 1st 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        data-changed='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        title='Modified on January 21st 2017. Created on January 21st 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/language-selector'>language-selector</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        title='Modified on January 27th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        title='Modified on January 27th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        data-changed='Sat Jan 21 2017 05:25:30 GMT-0800 (PST)'
+                        title='Modified on January 21st 2017. Created on January 21st 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/progressive-disclosure'>progressive-disclosure</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Oct 17 2016 06:28:51 GMT-0700 (PDT)'
+                        data-changed='Sun Jan 15 2017 15:15:05 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on October 17th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Oct 17 2016 06:28:51 GMT-0700 (PDT)'
+                        data-changed='Sun Jan 15 2017 15:15:05 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on October 17th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Dec 07 2016 06:14:39 GMT-0800 (PST)'
+                        data-changed='Wed Dec 07 2016 14:02:49 GMT-0800 (PST)'
+                        title='Modified on December 7th 2016. Created on December 7th 2016'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/sort'>sort</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Mar 29 2017 02:19:32 GMT-0700 (PDT)'
+                        data-changed='Thu Apr 06 2017 20:06:47 GMT-0700 (PDT)'
+                        title='Modified on April 6th 2017. Created on March 29th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Mar 29 2017 02:19:32 GMT-0700 (PDT)'
+                        data-changed='Thu Apr 20 2017 01:07:45 GMT-0700 (PDT)'
+                        title='Modified on April 20th 2017. Created on March 29th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Mar 29 2017 02:19:32 GMT-0700 (PDT)'
+                        data-changed='Wed Mar 29 2017 02:19:32 GMT-0700 (PDT)'
+                        title='Modified on March 29th 2017. Created on March 29th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/syntax-hints'>syntax-hints</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Jan 26 2017 11:04:48 GMT-0800 (PST)'
+                        data-changed='Tue Jan 31 2017 06:05:13 GMT-0800 (PST)'
+                        title='Modified on January 31st 2017. Created on January 26th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Jan 26 2017 11:04:48 GMT-0800 (PST)'
+                        data-changed='Mon Jan 30 2017 12:40:53 GMT-0800 (PST)'
+                        title='Modified on January 30th 2017. Created on January 26th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/timepicker'>timepicker</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Sun Jan 15 2017 15:24:23 GMT-0800 (PST)'
+                        data-changed='Sun Jan 15 2017 15:24:23 GMT-0800 (PST)'
+                        title='Modified on January 15th 2017. Created on January 15th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/toolbar'>toolbar</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Dec 19 2016 12:19:00 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 07:48:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on December 19th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Dec 19 2016 12:19:00 GMT-0800 (PST)'
+                        data-changed='Sat Mar 04 2017 07:04:45 GMT-0800 (PST)'
+                        title='Modified on March 4th 2017. Created on December 19th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Feb 13 2017 06:53:01 GMT-0800 (PST)'
+                        data-changed='Mon Feb 13 2017 07:10:43 GMT-0800 (PST)'
+                        title='Modified on February 13th 2017. Created on February 13th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>navigation</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/navigation/breadcrumbs'>breadcrumbs</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Jan 23 2017 11:49:30 GMT-0800 (PST)'
+                        data-changed='Mon Jan 23 2017 11:49:30 GMT-0800 (PST)'
+                        title='Modified on January 23rd 2017. Created on January 23rd 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Mon Jan 23 2017 11:49:30 GMT-0800 (PST)'
+                        data-changed='Thu Jan 26 2017 11:28:24 GMT-0800 (PST)'
+                        title='Modified on January 26th 2017. Created on January 23rd 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
+                        data-changed='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
+                        title='Modified on February 8th 2017. Created on February 8th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/navigation/horizontal-navigation'>horizontal-navigation</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Oct 11 2016 08:43:12 GMT-0700 (PDT)'
+                        data-changed='Mon Nov 07 2016 12:19:47 GMT-0800 (PST)'
+                        title='Modified on November 7th 2016. Created on October 11th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Oct 11 2016 10:28:22 GMT-0700 (PDT)'
+                        data-changed='Mon Nov 07 2016 12:19:47 GMT-0800 (PST)'
+                        title='Modified on November 7th 2016. Created on October 11th 2016'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
+                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/navigation/pagination'>pagination</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Jan 17 2017 10:59:00 GMT-0800 (PST)'
+                        data-changed='Tue Feb 07 2017 10:18:28 GMT-0800 (PST)'
+                        title='Modified on February 7th 2017. Created on January 17th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Tue Jan 17 2017 10:59:00 GMT-0800 (PST)'
+                        data-changed='Wed Feb 15 2017 08:07:20 GMT-0800 (PST)'
+                        title='Modified on February 15th 2017. Created on January 17th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
+                        data-changed='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
+                        title='Modified on February 8th 2017. Created on February 8th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/navigation/vertical-navigation'>vertical-navigation</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Jan 26 2017 10:18:43 GMT-0800 (PST)'
+                        data-changed='Wed Apr 19 2017 09:51:28 GMT-0700 (PDT)'
+                        title='Modified on April 19th 2017. Created on January 26th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Jan 26 2017 10:18:43 GMT-0800 (PST)'
+                        data-changed='Wed Apr 19 2017 09:51:28 GMT-0700 (PDT)'
+                        title='Modified on April 19th 2017. Created on January 26th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Thu Jan 26 2017 10:18:43 GMT-0800 (PST)'
+                        data-changed='Thu Jan 26 2017 10:18:43 GMT-0800 (PST)'
+                        title='Modified on January 26th 2017. Created on January 26th 2017'>
+                  </span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+      <tbody class='pf-design-table__files'>
+        <tr><th colspan='8'><h2>widgets</h2></th></tr>
+        <tr>
+          <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
+          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+        </tr>
+          <tr>
+            <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/widgets/buttons'>buttons</a></td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        title='Modified on January 27th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--present'>
+                  <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
+                        data-created='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        data-changed='Fri Jan 27 2017 07:46:52 GMT-0800 (PST)'
+                        title='Modified on January 27th 2017. Created on January 27th 2017'>
+                  </span>
+                </td>
+                <td class='pf-design-table__cell pf-design-table__cell--missing'>
+                  <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+          </tr>
+      </tbody>
+  </table>
+  </body>
+</html>
