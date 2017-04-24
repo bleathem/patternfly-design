@@ -219,6 +219,9 @@
   .pf-design-table__icon--present {
     color: #8b8d8f;
   }
+  .pf-design-table__cell__impl .pf-design-table__icon--present {
+    color: #92d400;
+  }
   .pf-design-table__icon--missing {
     color: #a30000;
   }
@@ -229,6 +232,9 @@
     font-size: 100%;
     padding: 3px;
     flex-shrink: 0;
+  }
+  .pf-design-table__row__header-files {
+    white-space: nowrap;
   }
   .remove-icon {
     animation: disappear .2s ease;
@@ -256,17 +262,13 @@
   }
 
   .table-striped > tbody > tr:nth-of-type(even) > td.pf-design-table__cell__impl {
-    background-color: white;
+    background-color: #ededed;
   }
 
   </style>
 </head>
 <body>
   <table class='table table-striped pf-design-table' >
-    <colgroup span="4">
-    </colgroup>
-    <colgroup class="pf-design-table__colgroup__impls" span="4">
-    </colgroup>
     <tbody class='pf-design-table__legend'>
       <tr><th colspan='4'><h2>File status indicators</h2></th></tr>
       <tr>
@@ -305,9 +307,9 @@
 
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>application-framework</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/application-framework/launcher'>launcher</a></td>
@@ -332,16 +334,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -364,22 +372,28 @@
                 <td class='pf-design-table__cell pf-design-table__cell--present'>
                   <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
                         data-created='Wed Feb 08 2017 06:23:19 GMT-0800 (PST)'
-                        data-changed='Thu Mar 02 2017 08:49:10 GMT-0800 (PST)'
-                        title='Modified on March 2nd 2017. Created on February 8th 2017'>
+                        data-changed='Sat Apr 22 2017 07:14:28 GMT-0700 (PDT)'
+                        title='Modified on April 22nd 2017. Created on February 8th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <a href="https://rawgit.com/patternfly/patternfly/master-dist/dist/tests/login.html" target="_new">
-                      <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--present'></span>
+                      <span class='fa fa-check pf-design-table__icon pf-design-table__icon--present'></span>
                     </a>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -406,25 +420,31 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>cards</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/cards/aggregate-status-card'>aggregate-status-card</a></td>
@@ -445,22 +465,28 @@
                 <td class='pf-design-table__cell pf-design-table__cell--present'>
                   <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--changed'
                         data-created='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
-                        data-changed='Fri Jan 20 2017 12:11:54 GMT-0800 (PST)'
-                        title='Modified on January 20th 2017. Created on January 20th 2017'>
+                        data-changed='Sat Apr 22 2017 07:14:28 GMT-0700 (PDT)'
+                        title='Modified on April 22nd 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <a href="https://www.patternfly.org/angular-patternfly/#/api/patternfly.card.directive:pfAggregateStatusCard" target="_new">
-                      <span class='fa fa-file-text-o pf-design-table__icon pf-design-table__icon--present'></span>
+                      <span class='fa fa-check pf-design-table__icon pf-design-table__icon--present'></span>
                     </a>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -487,16 +513,22 @@
                         title='Modified on February 8th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -523,16 +555,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -559,16 +597,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -595,25 +639,31 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>communication</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/communication/about-modal'>about-modal</a></td>
@@ -638,16 +688,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -674,16 +730,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -710,16 +772,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -746,16 +814,22 @@
                         title='Modified on January 15th 2017. Created on December 8th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -782,16 +856,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -818,16 +898,22 @@
                         title='Modified on April 3rd 2017. Created on April 3rd 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -854,25 +940,31 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>content-views</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/content-views/canvas-view'>canvas-view</a></td>
@@ -897,16 +989,22 @@
                         title='Modified on February 8th 2017. Created on February 8th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -933,16 +1031,22 @@
                         title='Modified on February 8th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -969,16 +1073,22 @@
                         title='Modified on February 2nd 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1005,25 +1115,31 @@
                         title='Modified on February 22nd 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>dashboard</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/dashboard/dashboard-layout'>dashboard-layout</a></td>
@@ -1048,25 +1164,31 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>data-visualization</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/data-visualization/area-chart'>area-chart</a></td>
@@ -1091,16 +1213,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1127,16 +1255,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1163,16 +1297,22 @@
                         title='Modified on December 7th 2016. Created on December 7th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1199,16 +1339,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1235,16 +1381,22 @@
                         title='Modified on December 7th 2016. Created on November 25th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1271,16 +1423,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1307,16 +1465,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1343,16 +1507,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1379,16 +1549,22 @@
                         title='Modified on December 7th 2016. Created on December 7th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1415,25 +1591,31 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>forms-and-controls</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/forms-and-controls/datepicker'>datepicker</a></td>
@@ -1458,16 +1640,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1494,16 +1682,22 @@
                         title='Modified on January 21st 2017. Created on January 21st 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1518,16 +1712,22 @@
                 <td class='pf-design-table__cell pf-design-table__cell--missing'>
                   <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1550,16 +1750,22 @@
                         title='Modified on December 7th 2016. Created on December 7th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1586,16 +1792,22 @@
                         title='Modified on December 7th 2016. Created on December 7th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1622,16 +1834,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1658,16 +1876,22 @@
                         title='Modified on January 21st 2017. Created on January 21st 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1694,16 +1918,22 @@
                         title='Modified on January 30th 2017. Created on February 14th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1726,16 +1956,22 @@
                         title='Modified on December 7th 2016. Created on December 7th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1762,16 +1998,22 @@
                         title='Modified on February 14th 2017. Created on January 30th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1798,16 +2040,22 @@
                         title='Modified on January 21st 2017. Created on January 21st 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1830,16 +2078,22 @@
                         title='Modified on January 21st 2017. Created on January 21st 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1866,16 +2120,22 @@
                         title='Modified on January 21st 2017. Created on January 21st 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1902,16 +2162,22 @@
                         title='Modified on December 7th 2016. Created on December 7th 2016'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1938,16 +2204,22 @@
                         title='Modified on March 29th 2017. Created on March 29th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -1970,16 +2242,22 @@
                 <td class='pf-design-table__cell pf-design-table__cell--missing'>
                   <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -2002,16 +2280,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -2038,25 +2322,31 @@
                         title='Modified on February 13th 2017. Created on February 13th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>navigation</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/navigation/breadcrumbs'>breadcrumbs</a></td>
@@ -2081,16 +2371,22 @@
                         title='Modified on February 8th 2017. Created on February 8th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -2117,16 +2413,22 @@
                         title='Modified on January 20th 2017. Created on January 20th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -2153,16 +2455,22 @@
                         title='Modified on February 8th 2017. Created on February 8th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
@@ -2189,25 +2497,31 @@
                         title='Modified on January 26th 2017. Created on January 26th 2017'>
                   </span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
       </tbody>
       <tbody class='pf-design-table__files'>
         <tr><th colspan='8'><h2>widgets</h2></th></tr>
-        <tr>
+        <tr class='pf-design-table__row__header-files'>
           <th>Pattern</th><th>overview.md</th><th>design.md</th><th>site.md</th>
-          <th>jQuery</th><th>Angular-PatternFly</th><th>PatternFly-ng</th><th>PatternFly-react</th>
+          <th>jQuery</th><th>Angular 1</th><th>Angular 2+ (ng)</th><th>React</th><th>Web component</th><th>CSS</th>
         </tr>
           <tr>
             <td><a href='https://github.com/patternfly/patternfly-design/tree/master/pattern-library/widgets/buttons'>buttons</a></td>
@@ -2228,16 +2542,22 @@
                 <td class='pf-design-table__cell pf-design-table__cell--missing'>
                   <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
-                <td class="pf-design-table__cell__impl">
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
+                    <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
+                </td>
+                <td class="pf-design-table__cell pf-design-table__cell__impl">
                     <span class='pficon pficon-close pf-design-table__icon pf-design-table__icon--missing'></span>
                 </td>
           </tr>
